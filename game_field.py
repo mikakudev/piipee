@@ -1,15 +1,19 @@
 import pygame
+
+from assets import GameManager
+from assets.GameManager import SCREEN
 from pipe import Pipe
 
 
 
 class GameField:
-    def __init__(self, size):
+    def __init__(self, size, screen):
         self.size = size
         self.field = []
         self.start_position = (0, 0)  # Начальная позиция
         self.end_position = (self.size - 1, self.size - 1)  # Конечная позиция
         self.create_field()
+        self.screen = screen
 
     def create_field(self):
         """Создание игрового поля."""
@@ -31,37 +35,38 @@ class GameField:
     def run_game(self):
         """Запуск игры."""
         # Инициализация Pygame
-        pygame.init()
+        #pygame.init()
         window_size = 600
-        screen = pygame.display.set_mode((window_size, window_size))
+        pygame.display.set_mode((window_size, window_size))
         pygame.display.set_caption("Трубопровод")
 
         # Главный игровой цикл
         running = True
         while running:
-            screen.fill((255, 255, 255))  # Заполнение экрана белым цветом
+            if GameManager.SCREEN == 'game':
+                self.screen.fill((255, 255, 255))  # Заполнение экрана белым цветом
 
-            # Отображаем игровое поле
-            self.display_field(screen)
+                # Отображаем игровое поле
+                self.display_field(self.screen)
 
-            # Проверка завершения игры
-            if self.is_game_solved():
-                print("Игра завершена!")
-                running = False  # Завершаем игру, если задача решена
+                # Проверка завершения игры
+                #if self.is_game_solved():
+                #    print("Игра завершена!")
+                #    running = False  # Завершаем игру, если задача решена
 
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False  # Закрыть игру
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    # Логика для обработки кликов по фишкам (поворот труб)
-                    x, y = event.pos
-                    row = y // (window_size // self.size)
-                    col = x // (window_size // self.size)
-                    if 0 <= row < self.size and 0 <= col < self.size:
-                        self.field[row][col].rotate()  # Поворот фишки
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        running = False  # Закрыть игру
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        # Логика для обработки кликов по фишкам (поворот труб)
+                        x, y = event.pos
+                        row = y // (window_size // self.size)
+                        col = x // (window_size // self.size)
+                        if 0 <= row < self.size and 0 <= col < self.size:
+                            self.field[row][col].rotate()  # Поворот фишки
 
-            # Обновление экрана
-            pygame.display.flip()
+                # Обновление экрана
+                pygame.display.flip()
 
         pygame.quit()
 

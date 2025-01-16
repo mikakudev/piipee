@@ -1,5 +1,8 @@
 import pygame
 import sys
+
+from assets import GameManager
+from assets.GameManager import SCREEN
 from game_field import GameField  # Импорт класса GameField
 
 # Размеры окна
@@ -47,6 +50,7 @@ def draw_button(text, x, y, width, height, color, action=None):
     screen.blit(text_surface, text_rect)
 
 
+
 # Главное меню
 def show_menu():
     try:
@@ -61,11 +65,12 @@ def show_menu():
             print(f"Выбран размер сетки: {selected_size}x{selected_size}")
 
         def start_game():
+            GameManager.SCREEN = 'game'
             print(f"Начинаем игру с размером {selected_size}x{selected_size}")
 
             # Логируем переход в игру
             try:
-                game_field = GameField(selected_size)  # Инициализируем игровое поле
+                game_field = GameField(selected_size, screen=screen)  # Инициализируем игровое поле
                 game_field.run_game()  # Запускаем игру
             except Exception as e:
                 print(f"Ошибка при запуске игры: {e}")
@@ -76,30 +81,31 @@ def show_menu():
 
         running = True
         while running:
-            screen.fill(WHITE)
+            if SCREEN == 'menu':
+                screen.fill(WHITE)
 
-            # Заголовок
-            title_surface = FONT.render("Выберите размер сетки", True, BLACK)
-            title_rect = title_surface.get_rect(center=(WINDOW_WIDTH // 2, 50))
-            screen.blit(title_surface, title_rect)
+                # Заголовок
+                title_surface = FONT.render("Выберите размер сетки", True, BLACK)
+                title_rect = title_surface.get_rect(center=(WINDOW_WIDTH // 2, 50))
+                screen.blit(title_surface, title_rect)
 
-            # Кнопки выбора размера сетки
-            draw_button("9x9", 100, 150, 100, 50, BLUE, lambda: change_size(9))
-            draw_button("12x12", 250, 150, 100, 50, BLUE, lambda: change_size(12))
-            draw_button("15x15", 400, 150, 100, 50, BLUE, lambda: change_size(15))
+                # Кнопки выбора размера сетки
+                draw_button("9x9", 100, 150, 100, 50, BLUE, lambda: change_size(9))
+                draw_button("12x12", 250, 150, 100, 50, BLUE, lambda: change_size(12))
+                draw_button("15x15", 400, 150, 100, 50, BLUE, lambda: change_size(15))
 
-            # Кнопки действия
-            draw_button("Начать игру", 150, 300, 150, 50, BLUE, start_game)
-            draw_button("Рекорды", 350, 300, 150, 50, BLUE, show_records)
+                # Кнопки действия
+                draw_button("Начать игру", 150, 300, 150, 50, BLUE, start_game)
+                draw_button("Рекорды", 350, 300, 150, 50, BLUE, show_records)
 
-            # Обновление экрана
-            pygame.display.flip()
+                # Обновление экрана
+                pygame.display.flip()
 
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                    pygame.quit()
-                    sys.exit()
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        running = False
+                        pygame.quit()
+                        sys.exit()
 
         # Делаем таймаут перед завершением, чтобы избежать быстрого закрытия
         pygame.time.wait(500)  # 500 миллисекунд перед выходом
