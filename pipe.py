@@ -23,19 +23,50 @@ class Pipe:
         image = PIPE_IMAGES[self.pipe_type]
         return pygame.transform.rotate(image, self.rotation)
 
-    def is_connectable(self, other_pipe):
-        """Проверка, могут ли две трубы соединяться."""
-        print(f"Проверка соединения между {self.pipe_type} и {other_pipe.pipe_type}")
+    def is_connectable(self, other_pipe, row, col, new_row, new_col):
+        """Проверка, могут ли две трубы соединяться по типу и направлению."""
+        print(
+            f"Проверка соединения между {self.pipe_type} ({self.rotation}) и {other_pipe.pipe_type} ({other_pipe.rotation})")
 
-        # Прямые трубы соединяются с прямыми
-        if self.pipe_type == "straight" and other_pipe.pipe_type == "straight":
+        # Карта направлений: row_delta, col_delta → направление
+        direction_map = {
+            (-1, 0): "north",  # вверх
+            (1, 0): "south",  # вниз
+            (0, -1): "west",  # влево
+            (0, 1): "east"  # вправо
+        }
+
+        # Определяем текущее направление движения
+        direction = direction_map[(new_row - row, new_col - col)]
+
+        # Карта допустимых направлений для каждого типа трубы
+        pipe_directions = {
+            "straight": {
+                0: {"north", "south"},  # вертикальная труба
+                90: {"west", "east"}  # горизонтальная труба
+            },
+            "corner": {
+                0: {"north", "east"},  # поворот "вверх-вправо"
+                90: {"east", "south"},  # поворот "вправо-вниз"
+                180: {"south", "west"},  # поворот "вниз-влево"
+                270: {"west", "north"}  # поворот "влево-вверх"
+            },
+            "double_corner": {
+                0: {"north", "south"},  # как прямая вертикальная
+                90: {"west", "east"}  # как прямая горизонтальная
+            }
+        }
+
+        # Получаем допустимые направления для текущей и соседней трубы
+        self_allowed = pipe_directions.get(self.pipe_type, {}).get(self.rotation, set())
+        other_allowed = pipe_directions.get(other_pipe.pipe_type, {}).get(other_pipe.rotation, set())
+
+        # Проверяем, совпадают ли направления
+        if direction in self_allowed and direction in other_allowed:
+            print(
+                f"Трубы соединяются: {self.pipe_type} ({self.rotation}) -> {other_pipe.pipe_type} ({other_pipe.rotation})")
             return True
-        # Колена соединяются с коленами
-        elif self.pipe_type == "corner" and other_pipe.pipe_type == "corner":
-            return True
-        # Двойные колена функционально как прямые трубы
-        elif self.pipe_type == "double_corner" and other_pipe.pipe_type == "double_corner":
-            return True
-        # Прочие типы соединений (можно доработать)
-        print(f"Не могут соединяться: {self.pipe_type} и {other_pipe.pipe_type}")
+
+        print(
+            f"Трубы не соединяются: {self.pipe_type} ({self.rotation}) -> {other_pipe.pipe_type} ({other_pipe.rotation})")
         return False
