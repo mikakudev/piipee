@@ -10,7 +10,7 @@ class GameField:
         self.size = size
         self.field = []
         self.start_position = (0, 0)  # Начальная позиция
-        self.end_position = (self.size - 1, self.size - 1)  # Конечная позиция
+        self.end_position = (self.size - 1, 0)  # Конечная позиция
         self.create_field()
         self.screen = screen
 
@@ -48,10 +48,10 @@ class GameField:
                 # Отображаем игровое поле
                 self.display_field(self.screen)
 
-                # Проверка завершения игры
-                #if self.is_game_solved():
-                #    print("Игра завершена!")
-                #    running = False  # Завершаем игру, если задача решена
+                 #Проверка завершения игры
+                if self.is_game_solved():
+                    print("Игра завершена!")
+                    running = False  # Завершаем игру, если задача решена
 
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
@@ -105,7 +105,8 @@ class GameField:
             if 0 <= new_row < self.size and 0 <= new_col < self.size:
                 print(f"Проверка соединения: ({row}, {col}) с ({new_row}, {new_col})")
                 # Проверяем, соединяются ли текущая фишка и соседняя
-                if self.field[row][col].is_connectable(self.field[new_row][new_col]):
+                if self.field[row][col].is_connectable(self.field[new_row][new_col], row, col, new_row, new_col):
+                    print('Можно соединить')
                     # Рекурсивно ищем путь
                     if self.dfs(new_row, new_col, visited):
                         return True
