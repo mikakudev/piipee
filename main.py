@@ -1,8 +1,8 @@
 import pygame
 import sys
 
-from assets import GameManager
-from assets.GameManager import SCREEN
+import GameManager
+from GameManager import SCREEN
 from game_field import GameField  # Импорт класса GameField
 
 # Размеры окна

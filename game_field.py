@@ -1,7 +1,6 @@
 import pygame
 
-from assets import GameManager
-from assets.GameManager import SCREEN
+import GameManager
 from pipe import Pipe
 
 
